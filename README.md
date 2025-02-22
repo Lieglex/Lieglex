@@ -19,6 +19,3 @@ Every day, these organizations face the challenge of providing balanced meals to
 - **Waste Reduction:** Minimizes food waste through precise distribution.
 - **Social Impact:** Contributes to the United Nations' Zero Hunger (SDG 2) goal, with a special focus on developing countries.
 
-## Brand Identity
-
-Lieglex is defined by its signature **navy blue** color, symbolizing trust, professionalism, and innovation.
