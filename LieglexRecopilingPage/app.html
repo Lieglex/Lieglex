@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LieGlex - Food Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather+Sans&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url("img/background2.png");
+            font-family: 'Merriweather Sans', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #0044cc;
+            margin-bottom: 20px;
+        }
+        .form-container {
+            width: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin: auto;
+            text-align: left;
+        }
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #0044cc;
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid #0044cc;
+            border-radius: 8px;
+            margin-top: 5px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #002288;
+            box-shadow: 0px 0px 8px rgba(0, 68, 204, 0.5);
+        }
+        .submit-btn {
+            background-color: #0044cc;
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+            width: 100%;
+        }
+        .submit-btn:hover {
+            background-color: #002288;
+        }
+        #foodGraphContainer {
+            margin-top: 20px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        img {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+            margin-top: 15px;
+        }
+        .graph-container {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>LieGlex - Food Registration</h1>
+
+    <!-- Food Registration Form -->
+    <div class="form-container">
+        <h2>Register Your Food</h2>
+        <label>Enter Barcode:</label>
+        <input type="text" id="barcodeInput" placeholder="Example: 737628064502">
+        <button class="submit-btn" onclick="registerFood()">Submit</button>
+    </div>
+
+    <!-- Graph Display -->
+    <div id="foodGraphContainer">
+        <h2>Registered Food Nutrient Graphs</h2>
+        <div id="graphs"></div>
+    </div>
+</div>
+
+<script>
+    function registerFood() {
+        let barcode = document.getElementById("barcodeInput").value.trim();
+        if (barcode === "") {
+            alert("Please enter a barcode.");
+            return;
+        }
+
+        let apiUrl = `https://www.wolframcloud.com/obj/faeced88-47b0-4e1d-ba79-279f59701d10?barcode=${barcode}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Product not found or API error.");
+                }
+                return response.blob();
+            })
+            .then(imageBlob => {
+                let imageUrl = URL.createObjectURL(imageBlob);
+
+                // Crear un nuevo contenedor de gráfica
+                let graphDiv = document.createElement("div");
+                graphDiv.classList.add("graph-container");
+
+                let img = document.createElement("img");
+                img.src = imageUrl;
+                img.alt = "Nutrient Graph";
+
+                let label = document.createElement("p");
+                label.innerHTML = `<strong>Barcode:</strong> ${barcode}`;
+
+                // Agregar imagen y label al contenedor
+                graphDiv.appendChild(label);
+                graphDiv.appendChild(img);
+
+                // Agregar el contenedor al área de gráficos
+                document.getElementById("graphs").appendChild(graphDiv);
+
+                // Resetear el input para ingresar otro código
+                document.getElementById("barcodeInput").value = "";
+            })
+            .catch(error => {
+                console.error(error);
+                alert("Could not fetch data. Please check the barcode.");
+            });
+    }
+</script>
+
+</body>
+</html>

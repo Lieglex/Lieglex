@@ -1,0 +1,114 @@
+CloudDeploy[
+  APIFunction[
+    {"barcode" -> "String"},
+    Module[{barcode, url, data, productName, nutrients, image},
+      barcode = #barcode;
+      url = "https://world.openfoodfacts.org/api/v0/product/" <> barcode <> ".json";
+      data = Import[url, "RawJSON"];
+      If[KeyExistsQ[data, "product"],
+        productName = data["product"]["product_name"];
+        nutrients = Association[
+          "Energy (kcal)" -> Lookup[data["product"]["nutriments"], "energy-kcal_100g", 0],
+          "Proteins (g)" -> Lookup[data["product"]["nutriments"], "proteins_100g", 0],
+          "Carbohydrates (g)" -> Lookup[data["product"]["nutriments"], "carbohydrates_100g", 0],
+          "Fats (g)" -> Lookup[data["product"]["nutriments"], "fat_100g", 0]
+        ];
+        image = BarChart[
+          Values[nutrients],
+          ChartLabels -> Placed[Keys[nutrients], Above],
+          ChartStyle -> "Pastel",
+          AxesLabel -> {"Nutrient", "Amount per 100g"},
+          ImageSize -> Medium,
+          PlotLabel -> productName
+        ];
+        Image[image],
+        HTTPResponse[<|"error" -> "Product not found"|>]
+      ]
+    ] &, "PNG"],
+  Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{optimizationResult},
+      optimizationResult = NMinimize[
+        {
+          x^2 + y^2, 
+          x + y >= 10, 
+          x - y <= 5, 
+          x >= 0, y >= 0
+        },
+        {x, y}
+      ];
+      optimizationResult
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{distributionSimulation},
+      distributionSimulation = Table[{RandomInteger[{1, 100}], RandomInteger[{1, 100}]}, {50}];
+      ListPlot[distributionSimulation, PlotStyle -> Red, ImageSize -> Medium]
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{randomNutrientAnalysis},
+      randomNutrientAnalysis = RandomChoice[{"Vitamin A", "Vitamin C", "Iron", "Calcium", "Fiber"}];
+      randomNutrientAnalysis
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{"ingredient" -> "String"},
+    Module[{ingredientAnalysis},
+      ingredientAnalysis = StringJoin["The ingredient ", #ingredient, " is a common food additive."];
+      ingredientAnalysis
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{caloricIntake},
+      caloricIntake = Table[RandomInteger[{100, 500}], {10}];
+      Histogram[caloricIntake, ImageSize -> Medium]
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{dailyFoodIntake},
+      dailyFoodIntake = PieChart[RandomInteger[{1, 10}, 5], ChartLabels -> {"Fruits", "Vegetables", "Proteins", "Carbs", "Fats"}, ImageSize -> Medium];
+      Image[dailyFoodIntake]
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{supplyChainAnalysis},
+      supplyChainAnalysis = Graph[{
+        "Farm" -> "Processing Plant",
+        "Processing Plant" -> "Distributor",
+        "Distributor" -> "Retail Store",
+        "Retail Store" -> "Consumer"
+      }, ImageSize -> Medium];
+      Image[supplyChainAnalysis]
+    ] &
+  ], Permissions -> "Public"
+]
+
+CloudDeploy[
+  APIFunction[{},
+    Module[{foodTrendAnalysis},
+      foodTrendAnalysis = TimeSeries[{RandomInteger[{50, 100}], RandomInteger[{50, 120}], RandomInteger[{60, 130}], RandomInteger[{70, 140}]}];
+      DateListPlot[foodTrendAnalysis, ImageSize -> Medium]
+    ] &
+  ], Permissions -> "Public"
+]
